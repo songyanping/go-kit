@@ -1,8 +1,12 @@
 package httpclient
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
 func TestHttpClient(t *testing.T) {
 	c := NewClient()
-	c.Request("https://baiduc.com", "GET", nil)
+	cxt := context.Background()
+	c.Request(cxt, "https://baiduc.com", "GET", nil)
 }

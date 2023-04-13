@@ -2,6 +2,7 @@ package httpclient
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -30,9 +31,13 @@ func NewClient() (client *Client) {
 	}
 }
 
-func (c *Client) Request(url string, method string, params interface{}) (result []byte, err error) {
+func (c *Client) Request(context context.Context, url string, method string, params interface{}) (result []byte, err error) {
 	data, _ := json.Marshal(params)
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(data))
+	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer(data))
+	if err != nil {
+		log.Printf("NewRequestWithContext error: %s", err.Error())
+		return nil, err
+	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
