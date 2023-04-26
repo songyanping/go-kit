@@ -9,6 +9,7 @@ import (
 	"github.com/prometheus/common/model"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -68,8 +69,8 @@ func (c *Client) QueryRange(ctx context.Context, endTime int64, query string) (v
 	return result
 }
 
-func (c *Client) GetApiMetricDetails(value model.Value) (result []ApiMetric) {
-	var values []ApiMetric
+func (c *Client) GetMetricsResultByVector(value model.Value) (result []MetricsModel) {
+	var metricsModels []MetricsModel
 	switch value.Type() {
 	case model.ValNone:
 		fmt.Println("None Type")
@@ -80,7 +81,7 @@ func (c *Client) GetApiMetricDetails(value model.Value) (result []ApiMetric) {
 	case model.ValVector:
 		fmt.Println("Vector Type")
 		v, _ := value.(model.Vector)
-		values = getApiMetricDetailsForVector(v)
+		metricsModels = getMetricsByVector(v)
 		break
 	case model.ValMatrix:
 		fmt.Println("Matrix Type")
@@ -93,29 +94,28 @@ func (c *Client) GetApiMetricDetails(value model.Value) (result []ApiMetric) {
 	default:
 		fmt.Printf("Unknow Type")
 	}
-	return values
+	return metricsModels
 }
 
-func getApiMetricDetailsForVector(v model.Vector) (result []ApiMetric) {
-	var values []ApiMetric
+func getMetricsByVector(v model.Vector) (result []MetricsModel) {
+	var metricsModels []MetricsModel
 	for _, i := range v {
 		fmt.Printf("%s %s %s\n", i.Metric.String(), i.Value.String(), i.Timestamp.String())
-		var apiMetric ApiMetric
+		var metricsModel MetricsModel
+
+		labelsMap := make(map[string]string)
 		for k, v := range i.Metric {
-			switch k {
-			case "channel":
-				apiMetric.Channel = string(v)
-				continue
-			case "response_code":
-				apiMetric.ResponseCode = string(v)
-				continue
-			case "url_path":
-				apiMetric.UrlPath = string(v)
-				continue
-			}
+			labelsMap[string(k)] = string(v)
 		}
-		apiMetric.Value = i.Value.String()
-		values = append(values, apiMetric)
+
+		floatValue, err := strconv.ParseFloat(i.Value.String(), 64)
+		if err != nil {
+			log.Errorf("strconv parsefloat err:%s", err.Error())
+		}
+		metricsModel.Labels = labelsMap
+		metricsModel.Value = floatValue
+		metricsModel.Timestamp = i.Timestamp.Unix()
+		metricsModels = append(metricsModels, metricsModel)
 	}
-	return values
+	return metricsModels
 }
