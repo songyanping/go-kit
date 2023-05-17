@@ -8,5 +8,5 @@ import (
 func TestHttpClient(t *testing.T) {
 	c := NewClient()
 	cxt := context.Background()
-	c.Request(cxt, "https://baiduc.com", "GET", nil)
+	c.Request(cxt, "https://amwaychina.codefactori.com/jira/rest/api/2/issue/NEOC-56804", "GET", nil)
 }
