@@ -76,7 +76,7 @@ func (c *Client) RequestStr(context context.Context, url string, method string, 
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("Request response body: %s", string(body))
+	fmt.Printf("RequestStr response body: %s", string(body))
 	return body, err
 }
 func (c *Client) RequestAuth(context context.Context, url string, method string, params interface{}, username string, password string) (result []byte, err error) {
