@@ -32,7 +32,12 @@ func NewClient() (client *Client) {
 }
 
 func (c *Client) Request(context context.Context, url string, method string, params interface{}) (result []byte, err error) {
-	data, _ := json.Marshal(params)
+	data, err := json.Marshal(params)
+	log.Printf("Request parameters: url=%s,method=%s,params=%s", url, method, method)
+	if err != nil {
+		log.Printf("Params Marshal err:%s", err.Error())
+		return nil, err
+	}
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer(data))
 	if err != nil {
 		log.Printf("NewRequestWithContext error: %s", err.Error())
@@ -43,18 +48,23 @@ func (c *Client) Request(context context.Context, url string, method string, par
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		log.Println(err.Error())
+		log.Printf("Do error: %s", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response body: ", string(body))
+	fmt.Printf("Request response body: %s", string(body))
 	return body, err
 }
 
 func (c *Client) RequestAuth(context context.Context, url string, method string, params interface{}, username string, password string) (result []byte, err error) {
-	data, _ := json.Marshal(params)
+	data, err := json.Marshal(params)
+	log.Printf("RequestAuth parameters: url=%s,method=%s,params=%s", url, method, method)
+	if err != nil {
+		log.Printf("Params Marshal err:%s", err.Error())
+		return nil, err
+	}
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer(data))
 	if err != nil {
 		log.Printf("NewRequestWithContext error: %s", err.Error())
@@ -66,12 +76,12 @@ func (c *Client) RequestAuth(context context.Context, url string, method string,
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		log.Println(err.Error())
+		log.Printf("Do error: %s", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response body: ", string(body))
+	fmt.Printf("RequestAuth response body: %s", string(body))
 	return body, err
 }
