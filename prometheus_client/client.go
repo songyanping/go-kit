@@ -97,6 +97,37 @@ func (c *Client) GetMetricsResultByVector(value model.Value) (result []MetricsMo
 	return metricsModels
 }
 
+func (c *Client) GetMetricsResultByMatrix(value model.Value) (result []MetricsMatrixModel) {
+	v, ok := value.(model.Matrix)
+	if !ok {
+		fmt.Errorf("Model Matrix assertion err:%s", value.String())
+		return nil
+	}
+
+	var metricsMatrixModels []MetricsMatrixModel
+	for _, i := range v {
+		fmt.Printf("%s %s\n", i.Metric.String(), i.Values)
+
+		labelsMap := make(map[string]string)
+		for k, v := range i.Metric {
+			labelsMap[string(k)] = string(v)
+		}
+
+		var valueList []float64
+		for _, j := range i.Values {
+			floatValue, _ := strconv.ParseFloat(j.Value.String(), 64)
+			valueList = append(valueList, floatValue)
+		}
+
+		var metrics MetricsMatrixModel
+		metrics.Labels = labelsMap
+		metrics.Value = valueList
+
+		metricsMatrixModels = append(metricsMatrixModels, metrics)
+	}
+	return metricsMatrixModels
+}
+
 func getMetricsByVector(v model.Vector) (result []MetricsModel) {
 	var metricsModels []MetricsModel
 	for _, i := range v {
