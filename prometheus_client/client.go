@@ -50,13 +50,14 @@ func (c *Client) Query(ctx context.Context, endTime int64, query string) (value 
 	return result
 }
 
-func (c *Client) QueryRange(ctx context.Context, endTime int64, query string) (value model.Value) {
+func (c *Client) QueryRange(ctx context.Context, endTime int64, beforeMinute int64, setp int64, query string) (value model.Value) {
 
 	end := time.Unix(0, endTime*int64(time.Millisecond)).UTC()
+	before := time.Duration(-(beforeMinute - 1)) * time.Minute // -(5-1)=-4,如查询5分钟之前指标
 	r := v1.Range{
-		Start: end.Add(-4 * time.Minute),
+		Start: end.Add(before),
 		End:   end,
-		Step:  time.Minute,
+		Step:  time.Duration(setp) * time.Minute,
 	}
 	v1api := v1.NewAPI(*c.client)
 	result, warnings, err := v1api.QueryRange(ctx, query, r, v1.WithTimeout(5*time.Second))

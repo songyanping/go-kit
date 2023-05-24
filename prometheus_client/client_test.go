@@ -25,7 +25,11 @@ func TestClient_QueryRange(t *testing.T) {
 	var ti int64
 	ti = 1684834766000
 	query := "api_data_by_channel_response_code_path{channel=\"ca\",response_code=~\"429\"}"
-	result := client.QueryRange(cxt, ti, query)
+	result := client.QueryRange(cxt, ti, 5, 1, query)
 	vaules := client.GetMetricsResultByMatrix(result)
-	fmt.Println(vaules)
+	//fmt.Println(vaules)
+	for _, v := range vaules {
+		fmt.Println(v.Labels["__name__"])
+		fmt.Println(v.Value)
+	}
 }
