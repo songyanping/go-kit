@@ -1,44 +1,41 @@
-package jira_client
+package jira
 
 import (
-	"errors"
 	"fmt"
 	"github.com/andygrunwald/go-jira"
 )
 
-var (
+func NewJiraConfig(url, username, password string) JiraConfig {
+	return JiraConfig{
+		Url:      url,
+		Username: username,
+		Password: password,
+	}
+}
+
+type JiraConfig struct {
 	Url      string
 	Username string
 	Password string
-)
-
-type Client struct {
-	client *jira.Client
 }
 
-func InitJiraConfig(url, username, password string) error {
-	if url == "" || username == "" || password == "" {
-		return errors.New("Input parameter cannot be empty")
-	}
-	Url = url
-	Username = username
-	Password = password
-	return nil
-}
-
-func NewClient() (client *Client) {
-	base := Url
+func NewClient(config JiraConfig) (*Client, error) {
+	base := config.Url
 	tp := jira.BasicAuthTransport{
-		Username: Username,
-		Password: Password,
+		Username: config.Username,
+		Password: config.Password,
 	}
 	jiraClient, err := jira.NewClient(tp.Client(), base)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to create Jira client: %w", err)
 	}
 	return &Client{
 		client: jiraClient,
-	}
+	}, nil
+}
+
+type Client struct {
+	client *jira.Client
 }
 
 func (c *Client) Get(issueId string) (summary string) {

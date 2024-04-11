@@ -1,4 +1,4 @@
-package prometheus_client
+package prometheus
 
 import (
 	"context"
@@ -20,16 +20,17 @@ func TestClient_Query(t *testing.T) {
 
 func TestClient_QueryRange(t *testing.T) {
 
-	client := NewClient("http://10.158.215.90")
+	client := NewClient("https://prometheus-sre-dev.intranet.local")
 	cxt := context.Background()
 	var ti int64
-	ti = 1684834766000
-	query := "api_data_by_channel_response_code_path{channel=\"ca\",response_code=~\"429\"}"
+	ti = 1712831135000
+	query := "k8s_webrequest_requestCount{path=\"/api/addCart\",datasource=\"alicloud\", deploymentType=\"base\"}"
 	result := client.QueryRange(cxt, ti, 5, 1, query)
 	vaules := client.GetMetricsResultByMatrix(result)
 	//fmt.Println(vaules)
 	for _, v := range vaules {
-		fmt.Println(v.Labels["__name__"])
+		fmt.Println(v.Labels)
 		fmt.Println(v.Value)
+		fmt.Println(v.Timestamp)
 	}
 }
