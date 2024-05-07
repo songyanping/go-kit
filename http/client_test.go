@@ -6,7 +6,7 @@ import (
 )
 
 func TestHttpClient(t *testing.T) {
-	c := NewClient()
 	cxt := context.Background()
-	c.Request(cxt, "http://xxx.com", "GET", nil)
+	c := NewClient()
+	c.RequestWithBody(cxt, "http://xxx.com", "GET", "")
 }

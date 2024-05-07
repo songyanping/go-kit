@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
+	"io"
 	"net/http"
 	"time"
 )
@@ -18,7 +16,7 @@ type Client struct {
 
 func NewClient() (client *Client) {
 
-	timeout := 120 * time.Second
+	timeout := 60 * time.Second
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -31,16 +29,11 @@ func NewClient() (client *Client) {
 	}
 }
 
-func (c *Client) Request(context context.Context, url string, method string, params interface{}) (result []byte, err error) {
-	log.Printf("Request parameters: url=%s,method=%s,params=%s", url, method, params)
-	data, err := json.Marshal(params)
+func (c *Client) RequestWithBody(context context.Context, url string, method string, body string) (result []byte, err error) {
+	fmt.Printf("Request parameters: url=%s,method=%s,body=%s", url, method, body)
+	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		log.Printf("Params Marshal err:%s", err.Error())
-		return nil, err
-	}
-	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer(data))
-	if err != nil {
-		log.Printf("NewRequestWithContext error: %s", err.Error())
+		fmt.Printf("NewRequestWithContext error: %s", err.Error())
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -48,47 +41,24 @@ func (c *Client) Request(context context.Context, url string, method string, par
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		log.Printf("Do error: %s", err.Error())
+		fmt.Printf("Do error: %s", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("Request response body: %s", string(body))
-	return body, err
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Io readAll error: %s", err.Error())
+		return nil, err
+	}
+	fmt.Printf("Request response body: %s", string(respBody))
+	return respBody, err
 }
-
-func (c *Client) RequestStr(context context.Context, url string, method string, params string) (result []byte, err error) {
-	log.Printf("RequestStr parameters: url=%s,method=%s,params=%s", url, method, params)
-	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(params)))
+func (c *Client) RequestWithAuth(context context.Context, url string, method string, body string, username string, password string) (result []byte, err error) {
+	fmt.Printf("Request parameters: url=%s,method=%s,body=%s", url, method, body)
+	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		log.Printf("NewRequestWithContext error: %s", err.Error())
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		log.Printf("Do error: %s", err.Error())
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("RequestStr response body: %s", string(body))
-	return body, err
-}
-func (c *Client) RequestAuth(context context.Context, url string, method string, params interface{}, username string, password string) (result []byte, err error) {
-	log.Printf("RequestAuth parameters: url=%s,method=%s,params=%s", url, method, params)
-	data, err := json.Marshal(params)
-	if err != nil {
-		log.Printf("Params Marshal err:%s", err.Error())
-		return nil, err
-	}
-	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer(data))
-	if err != nil {
-		log.Printf("NewRequestWithContext error: %s", err.Error())
+		fmt.Printf("NewRequestWithContext error: %s", err.Error())
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -97,12 +67,16 @@ func (c *Client) RequestAuth(context context.Context, url string, method string,
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		log.Printf("Do error: %s", err.Error())
+		fmt.Printf("Do error: %s", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("RequestAuth response body: %s", string(body))
-	return body, err
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Io readAll error: %s", err.Error())
+		return nil, err
+	}
+	fmt.Printf("Request response body: %s", string(respBody))
+	return respBody, err
 }
