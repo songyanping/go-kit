@@ -1,6 +1,7 @@
 package elasticsearch
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -98,4 +99,24 @@ func TestElasticsearchClient(t *testing.T) {
 		fmt.Println(i.Service)
 	}
 
+}
+
+func TestElasticsearchInsert(t *testing.T) {
+	Conf := NewEsConfig("10.158.215.42", 9200, "", "", "http")
+	client, err := NewSearchClient(Conf)
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	fmt.Println(time.Local)
+	fmt.Println(time.Now())
+	fmt.Println(time.Now().Local())
+	event := Event{
+		Time:    time.Now().Local(),
+		Title:   "test es",
+		Service: "demo",
+		Env:     "ft1",
+	}
+	body, _ := json.Marshal(event)
+	client.Insert(ctx, "events", body)
 }

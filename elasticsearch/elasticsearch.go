@@ -1,8 +1,11 @@
 package elasticsearch
 
 import (
+	"context"
 	"fmt"
 	es8 "github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
+	log "github.com/sirupsen/logrus"
 	"strings"
 	"time"
 )
@@ -66,4 +69,28 @@ func (es *EsClient) SearchContent(index, query string) (result string, err error
 	}
 	result = res.String()
 	return
+}
+
+func (es *EsClient) Insert(ctx context.Context, index string, body []byte) (err error) {
+	// 创建 Index 请求
+	indexReq := esapi.IndexRequest{
+		Index:   index,
+		Body:    strings.NewReader(string(body)),
+		Refresh: "true",
+	}
+
+	// 发送 Index 请求
+	indexRes, err := indexReq.Do(ctx, es.client)
+	if err != nil {
+		log.Error("Error insert document")
+		return err
+	}
+	defer indexRes.Body.Close()
+	if indexRes.IsError() {
+		log.Errorf("Error indexing document: %s", indexRes.Status())
+		return err
+	} else {
+		log.Println("Document indexed successfully!")
+	}
+	return nil
 }
