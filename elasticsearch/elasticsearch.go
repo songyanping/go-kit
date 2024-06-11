@@ -6,6 +6,7 @@ import (
 	es8 "github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"time"
@@ -87,13 +88,14 @@ func (es *EsClient) Insert(ctx context.Context, index string, documentID string,
 	// 发送 Index 请求
 	indexRes, err := indexReq.Do(ctx, es.client)
 	if err != nil {
-		log.Error("Error insert document")
+		log.Errorf("Error insert document:%s", err.Error())
 		return err
 	}
 	defer indexRes.Body.Close()
 	if indexRes.IsError() {
 		log.Errorf("Error indexing document: %s", indexRes.Status())
-		return err
+		log.Error(indexRes.String())
+		return errors.New("Error indexing document")
 	} else {
 		log.Println("Document indexed successfully!")
 	}
@@ -113,16 +115,17 @@ func (es *EsClient) Update(ctx context.Context, index string, documentID string,
 	// 发送 Index 请求
 	indexRes, err := indexReq.Do(ctx, es.client)
 	if err != nil {
-		log.Error("Error update document")
+		log.Errorf("Error update document:%s", err.Error())
 		return err
 	}
 	defer indexRes.Body.Close()
 	if indexRes.IsError() {
 		log.Errorf("Error update document: %s", indexRes.Status())
-		return err
+		log.Error(indexRes.String())
+		return errors.New("Error update document")
 	} else {
 		log.Println("Document update successfully!")
 	}
-	//log.Println(indexRes.String())
+
 	return nil
 }
