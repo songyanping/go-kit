@@ -100,3 +100,32 @@ func (es *EsClient) Insert(ctx context.Context, index string, documentID string,
 	//log.Println(indexRes.String())
 	return nil
 }
+
+func (es *EsClient) Update(ctx context.Context, index string, documentID string, body []byte) (err error) {
+	if documentID == "" {
+		documentID = uuid.NewString()
+	}
+	// 创建 Index 请求
+	indexReq := esapi.UpdateRequest{
+		Index:      index,
+		DocumentID: documentID,
+		Body:       strings.NewReader(string(body)),
+		Refresh:    "true",
+	}
+
+	// 发送 Index 请求
+	indexRes, err := indexReq.Do(ctx, es.client)
+	if err != nil {
+		log.Error("Error update document")
+		return err
+	}
+	defer indexRes.Body.Close()
+	if indexRes.IsError() {
+		log.Errorf("Error update document: %s", indexRes.Status())
+		return err
+	} else {
+		log.Println("Document update successfully!")
+	}
+	//log.Println(indexRes.String())
+	return nil
+}

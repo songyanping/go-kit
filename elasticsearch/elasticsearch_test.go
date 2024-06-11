@@ -132,3 +132,30 @@ func TestElasticsearchInsert(t *testing.T) {
 	body, _ := json.Marshal(alert)
 	client.Insert(ctx, "events", "", body)
 }
+
+func TestElasticsearchUpdate(t *testing.T) {
+	Conf := NewEsConfig("10.158.215.42", 9200, "", "", "http")
+	client, err := NewSearchClient(Conf)
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	fmt.Println(time.Local)
+	fmt.Println(time.Now())
+	fmt.Println(time.Now().Local())
+	//rfc := time.Now().Format(time.RFC3339)
+	event := Event{
+		Time:    time.Now().Local(),
+		Title:   "update test es",
+		Service: "demo",
+		Env:     "ft1",
+	}
+
+	alert := Alert{
+		Time:  time.Now().Local(),
+		Name:  "alert",
+		Event: event,
+	}
+	body, _ := json.Marshal(alert)
+	client.Insert(ctx, "events", "", body)
+}
