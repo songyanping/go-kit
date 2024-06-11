@@ -102,9 +102,6 @@ func (es *EsClient) Insert(ctx context.Context, index string, documentID string,
 }
 
 func (es *EsClient) Update(ctx context.Context, index string, documentID string, body []byte) (err error) {
-	if documentID == "" {
-		documentID = uuid.NewString()
-	}
 	// 创建 Index 请求
 	indexReq := esapi.UpdateRequest{
 		Index:      index,
