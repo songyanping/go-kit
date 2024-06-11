@@ -6,6 +6,7 @@ require (
 	github.com/andygrunwald/go-jira v1.16.0
 	github.com/elastic/go-elasticsearch/v8 v8.13.0
 	github.com/gin-gonic/gin v1.9.1
+	github.com/google/uuid v1.6.0
 	github.com/prometheus/client_golang v1.15.0
 	github.com/prometheus/common v0.42.0
 	github.com/sirupsen/logrus v1.9.0

@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+type Alert struct {
+	Time  time.Time
+	Name  string
+	Event Event
+}
+
 type Event struct {
 	Time        time.Time              `json:"time"`
 	StartsAt    string                 `json:"starts_at"`
@@ -117,6 +123,12 @@ func TestElasticsearchInsert(t *testing.T) {
 		Service: "demo",
 		Env:     "ft1",
 	}
-	body, _ := json.Marshal(event)
-	client.Insert(ctx, "events", body)
+
+	alert := Alert{
+		Time:  time.Now().Local(),
+		Name:  "alert",
+		Event: event,
+	}
+	body, _ := json.Marshal(alert)
+	client.Insert(ctx, "events", "", body)
 }

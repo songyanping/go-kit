@@ -5,12 +5,13 @@ import (
 	"fmt"
 	es8 "github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"time"
 )
 
-func NewEsConfig(host string, port int, username, password, protocol string) EsConfig {
+func NewEsConfig(host string, port int64, username, password, protocol string) EsConfig {
 	return EsConfig{
 		Host:     host,
 		Port:     port,
@@ -22,7 +23,7 @@ func NewEsConfig(host string, port int, username, password, protocol string) EsC
 
 type EsConfig struct {
 	Host     string
-	Port     int
+	Port     int64
 	Username string
 	Password string
 	Protocol string
@@ -71,12 +72,16 @@ func (es *EsClient) SearchContent(index, query string) (result string, err error
 	return
 }
 
-func (es *EsClient) Insert(ctx context.Context, index string, body []byte) (err error) {
+func (es *EsClient) Insert(ctx context.Context, index string, documentID string, body []byte) (err error) {
+	if documentID == "" {
+		documentID = uuid.NewString()
+	}
 	// 创建 Index 请求
 	indexReq := esapi.IndexRequest{
-		Index:   index,
-		Body:    strings.NewReader(string(body)),
-		Refresh: "true",
+		Index:      index,
+		DocumentID: documentID,
+		Body:       strings.NewReader(string(body)),
+		Refresh:    "true",
 	}
 
 	// 发送 Index 请求
@@ -92,5 +97,6 @@ func (es *EsClient) Insert(ctx context.Context, index string, body []byte) (err 
 	} else {
 		log.Println("Document indexed successfully!")
 	}
+	//log.Println(indexRes.String())
 	return nil
 }
