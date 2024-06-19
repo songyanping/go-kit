@@ -20,12 +20,12 @@ func TestClient_Query(t *testing.T) {
 
 func TestClient_QueryRange(t *testing.T) {
 
-	client := NewClient("https://prometheus-sre-dev.intranet.local")
+	client := NewClient("https://prometheus-sre.intranet.local")
 	cxt := context.Background()
 	var ti int64
-	ti = 1712831135000
+	ti = 1718784833172
 	query := "k8s_webrequest_requestCount{path=\"/api/addCart\",datasource=\"alicloud\", deploymentType=\"base\"}"
-	result := client.QueryRange(cxt, ti, 5, 1, query)
+	result := client.QueryRange(cxt, ti, 30, 5, query)
 	vaules := client.GetMetricsResultByMatrix(result)
 	//fmt.Println(vaules)
 	for _, v := range vaules {
