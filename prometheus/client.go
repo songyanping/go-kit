@@ -50,7 +50,7 @@ type Client struct {
 func (c *Client) Query(ctx context.Context, endTime int64, query string) (value model.Value) {
 	end := time.Unix(0, endTime*int64(time.Millisecond)).UTC()
 	v1api := v1.NewAPI(*c.client)
-	result, warnings, err := v1api.Query(ctx, query, end, v1.WithTimeout(5*time.Second))
+	result, warnings, err := v1api.Query(ctx, query, end, v1.WithTimeout(120*time.Second))
 	if err != nil {
 		log.Errorf("Error querying Prometheus: %v\n", err)
 		return
@@ -71,7 +71,7 @@ func (c *Client) QueryRange(ctx context.Context, endTime int64, beforeMinute int
 		Step:  time.Duration(setp) * time.Minute,
 	}
 	v1api := v1.NewAPI(*c.client)
-	result, warnings, err := v1api.QueryRange(ctx, query, r, v1.WithTimeout(5*time.Second))
+	result, warnings, err := v1api.QueryRange(ctx, query, r, v1.WithTimeout(120*time.Second))
 	if err != nil {
 		log.Errorf("Error querying Prometheus: %v\n", err)
 	}
