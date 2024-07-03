@@ -19,8 +19,8 @@ func TestClient_Query(t *testing.T) {
 }
 
 func TestClient_QueryRange(t *testing.T) {
-
 	client := NewClient("https://prometheus-sre.intranet.local")
+	//client := NewClient("http://10.158.215.47:8481/select/0/prometheus/")
 	cxt := context.Background()
 	var ti int64
 	ti = 1718784833172

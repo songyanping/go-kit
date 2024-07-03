@@ -1,0 +1,109 @@
+{
+"msg_type": "interactive",
+"card":
+  {
+    "config": {},
+    "i18n_elements": {
+      "zh_cn": [
+        {
+          "tag": "column_set",
+          "flex_mode": "none",
+          "background_style": "default",
+          "horizontal_spacing": "8px",
+          "horizontal_align": "left",
+          "columns": [
+            {
+              "tag": "column",
+              "width": "weighted",
+              "vertical_align": "top",
+              "vertical_spacing": "8px",
+              "background_style": "default",
+              "elements": [
+                {
+                  "tag": "markdown",
+                  "content": "${Reason}\n",
+                  "text_align": "left",
+                  "text_size": "normal"
+                },
+                {
+                  "tag": "markdown",
+                  "content": "**影响范围**\n> 1. 服务: ${Service}     \n> 2. API路径: ${Paths}      \n> 3. 描述: ${Description} ",
+                  "text_align": "left",
+                  "text_size": "normal",
+                  "icon": {
+                    "tag": "standard_icon",
+                    "token": "file-lark-minutes_colorful",
+                    "color": "grey"
+                  }
+                }
+              ],
+              "weight": 1
+            }
+          ],
+          "margin": "16px 0px 0px 0px"
+        },
+        {
+          "tag": "markdown",
+          "content": "**详细指标**\n> 1. 请求数: ${Request_Count}  \n> 2. 异常数: ${Exception_Count}\n> 3. 请求成功率: ${Success_Rate}  \n> 4. 请求延迟: ${Request_Latency}",
+          "text_align": "left",
+          "text_size": "normal",
+          "icon": {
+            "tag": "standard_icon",
+            "token": "wiki-bitable_colorful",
+            "color": "grey"
+          }
+        },
+        {
+          "tag": "column_set",
+          "flex_mode": "stretch",
+          "background_style": "default",
+          "horizontal_spacing": "8px",
+          "horizontal_align": "left",
+          "columns": [
+            {
+              "tag": "column",
+              "width": "weighted",
+              "vertical_align": "top",
+              "vertical_spacing": "8px",
+              "background_style": "default",
+              "elements": [
+                {
+                  "tag": "column_set",
+                  "flex_mode": "none",
+                  "background_style": "default",
+                  "horizontal_spacing": "8px",
+                  "horizontal_align": "left",
+                  "columns": [
+                    {
+                      "tag": "column",
+                      "width": "weighted",
+                      "vertical_align": "top",
+                      "elements": [],
+                      "weight": 1
+                    }
+                  ],
+                  "margin": "0px 0px 0px 0px"
+                }
+              ],
+              "weight": 1
+            }
+          ],
+          "margin": "16px 0px 0px 0px"
+        }
+      ]
+    },
+    "i18n_header": {
+      "zh_cn": {
+        "title": {
+          "tag": "plain_text",
+          "content": "[${Status}][${Severity}]${Summary}"
+        },
+        "subtitle": {
+          "tag": "plain_text",
+          "content": "问题发生在: ${StartsAt} ~ ${EndsAt} (持续${Duration}min) "
+        },
+        "template": "green"
+      }
+    }
+  }
+}
