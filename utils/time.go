@@ -37,3 +37,14 @@ func TimeStrFormatCST(timeStr string) (string, error) {
 	// 按照指定格式输出时间
 	return tInCST.Format("2006-01-02 15:04:05"), nil
 }
+
+func TimeStrFormatTime(timeStr string) (time.Time, error) {
+	// 定义时间格式
+	layout := "2006-01-02 15:04:05"
+	// 使用Parse解析时间字符串
+	t, err := time.Parse(layout, timeStr)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("error parsing time: %v", err)
+	}
+	return t, nil
+}

@@ -19,4 +19,6 @@ func TestTimeFormatNow(t *testing.T) {
 
 	timeString, err = utils.TimeStrFormatCST("2024-07-18T10:44:22+08:00")
 	fmt.Println(timeString)
+	tt, _ := utils.TimeStrFormatTime("2024-07-18 10:44:22")
+	fmt.Println(tt.Local())
 }
