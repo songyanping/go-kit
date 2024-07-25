@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"reflect"
+	"sort"
 	"time"
 )
 
@@ -47,4 +49,47 @@ func TimeStrFormatTime(timeStr string) (time.Time, error) {
 		return time.Time{}, fmt.Errorf("error parsing time: %v", err)
 	}
 	return t, nil
+}
+
+func TimeSortStructsByField(slice interface{}, fieldName string, asc bool) (interface{}, error) {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return nil, fmt.Errorf("expected a slice, got %T", slice)
+	}
+
+	sortedSlice := reflect.MakeSlice(rv.Type(), rv.Len(), rv.Cap())
+	reflect.Copy(sortedSlice, rv)
+
+	sort.SliceStable(sortedSlice.Interface(), func(i, j int) bool {
+		iVal, jVal := sortedSlice.Index(i), sortedSlice.Index(j)
+
+		// 如果是指针类型，需要解引用到实际的对象
+		if iVal.Kind() == reflect.Ptr {
+			iVal = iVal.Elem()
+		}
+		if jVal.Kind() == reflect.Ptr {
+			jVal = jVal.Elem()
+		}
+
+		iField := iVal.FieldByName(fieldName)
+		jField := jVal.FieldByName(fieldName)
+
+		if !iField.IsValid() || !jField.IsValid() || iField.Kind() != reflect.Struct || jField.Kind() != reflect.Struct {
+			return false
+		}
+
+		iTime, okI := iField.Interface().(time.Time)
+		jTime, okJ := jField.Interface().(time.Time)
+		if !okI || !okJ {
+			return false
+		}
+
+		if asc {
+			return iTime.Before(jTime)
+		} else {
+			return jTime.Before(iTime)
+		}
+	})
+
+	return sortedSlice.Interface(), nil
 }
