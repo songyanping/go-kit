@@ -51,7 +51,7 @@ func TimeStrFormatTime(timeStr string) (time.Time, error) {
 	return t, nil
 }
 
-func TimeSortStructsByField(slice interface{}, fieldName string, asc bool) (interface{}, error) {
+func TimeSortStructsByFieldTime(slice interface{}, fieldName string, asc bool) (interface{}, error) {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
 		return nil, fmt.Errorf("expected a slice, got %T", slice)
@@ -81,6 +81,59 @@ func TimeSortStructsByField(slice interface{}, fieldName string, asc bool) (inte
 		iTime, okI := iField.Interface().(time.Time)
 		jTime, okJ := jField.Interface().(time.Time)
 		if !okI || !okJ {
+			return false
+		}
+
+		if asc {
+			return iTime.Before(jTime)
+		} else {
+			return jTime.Before(iTime)
+		}
+	})
+
+	return sortedSlice.Interface(), nil
+}
+
+func TimeSortStructsByFieldString(slice interface{}, fieldName string, asc bool) (interface{}, error) {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return nil, fmt.Errorf("expected a slice, got %T", slice)
+	}
+
+	sortedSlice := reflect.MakeSlice(rv.Type(), rv.Len(), rv.Cap())
+	reflect.Copy(sortedSlice, rv)
+
+	sort.SliceStable(sortedSlice.Interface(), func(i, j int) bool {
+		iVal, jVal := sortedSlice.Index(i), sortedSlice.Index(j)
+
+		// 如果是指针类型，需要解引用
+		if iVal.Kind() == reflect.Ptr {
+			iVal = iVal.Elem()
+		}
+		if jVal.Kind() == reflect.Ptr {
+			jVal = jVal.Elem()
+		}
+
+		iField := iVal.FieldByName(fieldName)
+		jField := jVal.FieldByName(fieldName)
+
+		// 检查字段是否存在
+		if !iField.IsValid() || !jField.IsValid() {
+			return false
+		}
+
+		// 将字段值作为字符串读取
+		iStr, okI := iField.Interface().(string)
+		jStr, okJ := jField.Interface().(string)
+		if !okI || !okJ {
+			return false
+		}
+
+		// 解析字符串到 time.Time
+		layout := "2006-01-02 15:04:05" // 确保这个格式与你的时间字符串匹配
+		iTime, errI := time.Parse(layout, iStr)
+		jTime, errJ := time.Parse(layout, jStr)
+		if errI != nil || errJ != nil {
 			return false
 		}
 

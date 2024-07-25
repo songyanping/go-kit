@@ -28,7 +28,12 @@ type MyEvent struct {
 	Time time.Time
 }
 
-func TestTimeSortStructsByField(t *testing.T) {
+type MyEventString struct {
+	Name string
+	Time string
+}
+
+func TestTimeSortStructsByFieldTime(t *testing.T) {
 
 	var events = []*MyEvent{}
 	for i := 0; i < 5; i++ {
@@ -38,12 +43,30 @@ func TestTimeSortStructsByField(t *testing.T) {
 		})
 	}
 
-	sortedEvents, err := utils.TimeSortStructsByField(events, "Time", true) // 按时间降序排列
+	sortedEvents, err := utils.TimeSortStructsByFieldTime(events, "Time", false) // 按时间降序排列
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 	for _, event := range sortedEvents.([]*MyEvent) { // 类型断言转换回原始类型
+		fmt.Println(event.Name, event.Time)
+	}
+}
+
+func TestTimeSortStructsByFieldString(t *testing.T) {
+
+	events := []*MyEventString{
+		{Name: "Event1", Time: "2022-10-12 22:11:00"},
+		{Name: "Event2", Time: "2022-09-11 20:10:00"},
+		{Name: "Event3", Time: "2022-11-13 23:12:00"},
+	}
+
+	sortedEvents, err := utils.TimeSortStructsByFieldString(events, "Time", false) // 按时间降序排列
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	for _, event := range sortedEvents.([]*MyEventString) { // 类型断言转换回原始类型
 		fmt.Println(event.Name, event.Time)
 	}
 }
