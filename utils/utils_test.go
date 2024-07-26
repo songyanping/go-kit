@@ -70,3 +70,9 @@ func TestTimeSortStructsByFieldString(t *testing.T) {
 		fmt.Println(event.Name, event.Time)
 	}
 }
+
+func TestTimeConvertTimestampString(t *testing.T) {
+
+	stringTime, _ := utils.TimeConvertTimestampString(1721983237000)
+	fmt.Println(stringTime)
+}

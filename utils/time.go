@@ -146,3 +146,25 @@ func TimeSortStructsByFieldString(slice interface{}, fieldName string, asc bool)
 
 	return sortedSlice.Interface(), nil
 }
+
+// ConvertTimestampMillisToCST 将以毫秒为单位的int64格式的UNIX时间戳转换为CST时间的字符串表示
+func TimeConvertTimestampString(timestampMillis int64) (string, error) {
+	// 将毫秒转换为秒和纳秒
+	seconds := timestampMillis / 1000
+	nanoseconds := (timestampMillis % 1000) * 1000000
+
+	// 使用time.Unix函数将时间戳转换为time.Time格式
+	t := time.Unix(seconds, nanoseconds)
+
+	// 加载CST时区
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		return "", fmt.Errorf("加载时区失败: %v", err)
+	}
+
+	// 转换到CST时区
+	cstTime := t.In(loc)
+
+	// 返回转换后的CST时间的字符串表示
+	return cstTime.Format(time.DateTime), nil
+}
