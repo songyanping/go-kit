@@ -73,6 +73,6 @@ func TestTimeSortStructsByFieldString(t *testing.T) {
 
 func TestTimeConvertTimestampString(t *testing.T) {
 
-	stringTime, _ := utils.TimeConvertTimestampString(1721983237000)
+	stringTime, _ := utils.TimeConvertSecondsString(1721983237)
 	fmt.Println(stringTime)
 }
