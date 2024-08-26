@@ -76,3 +76,11 @@ func TestTimeConvertTimestampString(t *testing.T) {
 	stringTime, _ := utils.TimeConvertSecondsString(1721983237)
 	fmt.Println(stringTime)
 }
+
+func TestTimeStrFormatTime(t *testing.T) {
+
+	stringTime, _ := utils.TimeStrFormatTime("2024-07-30 10:30:00")
+	stringTime2, _ := utils.TimeStrFormatTime("2024-07-30 10:10:00")
+	beforeMinutes := stringTime2.Minute() - stringTime.Minute()
+	fmt.Println(beforeMinutes)
+}

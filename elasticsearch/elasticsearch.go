@@ -104,7 +104,7 @@ func (es *EsClient) Insert(ctx context.Context, index string, documentID string,
 }
 
 func (es *EsClient) Update(ctx context.Context, index string, documentID string, body []byte) (err error) {
-	// 创建 Index 请求
+	// 创建 Index 请求,通过http方式进行更新
 	//indexReq := esapi.UpdateRequest{
 	//	Index:      index,
 	//	DocumentID: documentID,
@@ -129,6 +129,22 @@ func (es *EsClient) Update(ctx context.Context, index string, documentID string,
 		return errors.New("Error update document")
 	} else {
 		log.Println("Document update successfully!")
+	}
+	return nil
+}
+
+func (es *EsClient) Delete(ctx context.Context, index string, Id string) (err error) {
+	res, err := es.client.Delete(index, Id, es.client.Delete.WithContext(ctx))
+	if err != nil {
+		log.Errorf("Error delete document id:%s, %s", Id, err.Error())
+	}
+	defer res.Body.Close()
+	if res.IsError() {
+		//log.Errorf("Error update document: %s", res.Status())
+		log.Errorf("id:%s %s", Id, res.String())
+		return errors.New("Error delete document")
+	} else {
+		log.Printf("Document delete successfully id:%s", Id)
 	}
 	return nil
 }
