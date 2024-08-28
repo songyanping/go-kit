@@ -133,18 +133,18 @@ func (es *EsClient) Update(ctx context.Context, index string, documentID string,
 	return nil
 }
 
-func (es *EsClient) Delete(ctx context.Context, index string, Id string) (err error) {
-	res, err := es.client.Delete(index, Id, es.client.Delete.WithContext(ctx))
+func (es *EsClient) Delete(ctx context.Context, index string, id string) (err error) {
+	res, err := es.client.Delete(index, id, es.client.Delete.WithContext(ctx))
 	if err != nil {
-		log.Errorf("Error delete document id:%s, %s", Id, err.Error())
+		log.Errorf("Error delete document id:%s, %s", id, err.Error())
 	}
 	defer res.Body.Close()
 	if res.IsError() {
 		//log.Errorf("Error update document: %s", res.Status())
-		log.Errorf("id:%s %s", Id, res.String())
+		log.Errorf("id:%s %s", id, res.String())
 		return errors.New("Error delete document")
 	} else {
-		log.Printf("Document delete successfully id:%s", Id)
+		log.Printf("Document delete successfully id:%s", id)
 	}
 	return nil
 }
