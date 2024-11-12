@@ -85,7 +85,7 @@ func (c *Client) GetMetricsResultByVector(value model.Value) (result []MetricDat
 	var metrics []MetricDataVector
 	v, ok := value.(model.Vector)
 	if !ok {
-		log.Errorf("Model Vector assertion err:%s", value.String())
+		log.Errorf("Model Vector assertion err")
 		return metrics
 	}
 
@@ -113,7 +113,7 @@ func (c *Client) GetMetricsResultByMatrix(value model.Value) (result []MetricDat
 	var metrics []MetricDataMatrix
 	v, ok := value.(model.Matrix)
 	if !ok {
-		log.Errorf("Model Matrix assertion err:%s", value.String())
+		log.Errorf("Model Matrix assertion err")
 		return metrics
 	}
 
