@@ -82,17 +82,16 @@ func (c *Client) QueryRange(ctx context.Context, endTime int64, beforeMinute int
 }
 
 func (c *Client) GetMetricsResultByVector(value model.Value) (result []MetricDataVector) {
+	var metrics []MetricDataVector
 	v, ok := value.(model.Vector)
 	if !ok {
 		log.Errorf("Model Vector assertion err:%s", value.String())
-		return []MetricDataVector{}
+		return metrics
 	}
 
-	var metrics []MetricDataVector
 	for _, i := range v {
-		log.Debugf("%s %s %s\n", i.Metric.String(), i.Value.String(), i.Timestamp.String())
+		log.Infof("%s %s %s\n", i.Metric.String(), i.Value.String(), i.Timestamp.String())
 		var metric MetricDataVector
-
 		labelsMap := make(map[string]string)
 		for k, v := range i.Metric {
 			labelsMap[string(k)] = string(v)
@@ -111,13 +110,13 @@ func (c *Client) GetMetricsResultByVector(value model.Value) (result []MetricDat
 }
 
 func (c *Client) GetMetricsResultByMatrix(value model.Value) (result []MetricDataMatrix) {
+	var metrics []MetricDataMatrix
 	v, ok := value.(model.Matrix)
 	if !ok {
 		log.Errorf("Model Matrix assertion err:%s", value.String())
-		return []MetricDataMatrix{}
+		return metrics
 	}
 
-	var metrics []MetricDataMatrix
 	for _, i := range v {
 		log.Printf("%s %s\n", i.Metric.String(), i.Values)
 

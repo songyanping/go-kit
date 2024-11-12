@@ -185,3 +185,11 @@ func TimeConvertSecondsString(timestampSeconds int64) (string, error) {
 	// 返回转换后的CST时间的字符串表示
 	return cstTime.Format(time.DateTime), nil
 }
+
+// getStartAndEndOfWeek 返回给定时间所在周的开始和结束时间
+func GetStartAndEndOfWeek(t time.Time) (start, end time.Time) {
+	// 确定周一为每周的开始
+	start = time.Date(t.Year(), t.Month(), t.Day()-int(t.Weekday()), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
+	end = start.AddDate(0, 0, 6) // 向后加6天得到周日
+	return
+}

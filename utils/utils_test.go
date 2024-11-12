@@ -84,3 +84,20 @@ func TestTimeStrFormatTime(t *testing.T) {
 	beforeMinutes := stringTime2.Minute() - stringTime.Minute()
 	fmt.Println(beforeMinutes)
 }
+
+func TestGetStartAndEndOfWeek(t *testing.T) {
+	// 获取当前时间
+	//now := time.Now()
+	now := time.Date(2024, 8, 28, 2, 0, 0, 0, time.Local)
+
+	// 计算7天前的时间
+	sevenDaysAgo := now.AddDate(0, 0, -6)
+
+	// 格式化日期
+	startDateStr := sevenDaysAgo.Format("2006/01/02")
+	endDateStr := now.Format("2006/01/02")
+
+	// 拼接日期周期字符串
+	dateRangeStr := fmt.Sprintf("%s-%s", startDateStr, endDateStr)
+	fmt.Println(dateRangeStr)
+}
