@@ -33,7 +33,7 @@ func (c *Client) RequestWithBody(context context.Context, url string, method str
 	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		fmt.Printf("NewRequestWithContext error: %s", err.Error())
+		fmt.Printf("NewRequestWithContext error: %s\n", err.Error())
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -41,14 +41,14 @@ func (c *Client) RequestWithBody(context context.Context, url string, method str
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		fmt.Printf("Do error: %s", err.Error())
+		fmt.Printf("Do error: %s\n", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("Io readAll error: %s", err.Error())
+		fmt.Printf("Io readAll error: %s\n", err.Error())
 		return nil, err
 	}
 	fmt.Printf("Request response body: %s\n", string(respBody))
@@ -58,7 +58,7 @@ func (c *Client) RequestWithAuth(context context.Context, url string, method str
 	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		fmt.Printf("NewRequestWithContext error: %s", err.Error())
+		fmt.Printf("NewRequestWithContext error: %s\n", err.Error())
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -67,14 +67,14 @@ func (c *Client) RequestWithAuth(context context.Context, url string, method str
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		fmt.Printf("Do error: %s", err.Error())
+		fmt.Printf("Do error: %s\n", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("Io readAll error: %s", err.Error())
+		fmt.Printf("Io readAll error: %s\n", err.Error())
 		return nil, err
 	}
 	fmt.Printf("Request response body: %s\n", string(respBody))
