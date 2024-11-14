@@ -30,7 +30,7 @@ func NewClient() (client *Client) {
 }
 
 func (c *Client) RequestWithBody(context context.Context, url string, method string, body string) (result []byte, err error) {
-	fmt.Printf("Request parameters: url=%s,method=%s,body=%s", url, method, body)
+	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		fmt.Printf("NewRequestWithContext error: %s", err.Error())
@@ -51,11 +51,11 @@ func (c *Client) RequestWithBody(context context.Context, url string, method str
 		fmt.Printf("Io readAll error: %s", err.Error())
 		return nil, err
 	}
-	fmt.Printf("Request response body: %s", string(respBody))
+	fmt.Printf("Request response body: %s\n", string(respBody))
 	return respBody, err
 }
 func (c *Client) RequestWithAuth(context context.Context, url string, method string, body string, username string, password string) (result []byte, err error) {
-	fmt.Printf("Request parameters: url=%s,method=%s,body=%s", url, method, body)
+	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		fmt.Printf("NewRequestWithContext error: %s", err.Error())
@@ -77,6 +77,6 @@ func (c *Client) RequestWithAuth(context context.Context, url string, method str
 		fmt.Printf("Io readAll error: %s", err.Error())
 		return nil, err
 	}
-	fmt.Printf("Request response body: %s", string(respBody))
+	fmt.Printf("Request response body: %s\n", string(respBody))
 	return respBody, err
 }
