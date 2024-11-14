@@ -44,7 +44,7 @@ func (c *Client) RequestWithBody(context context.Context, url string, method str
 		fmt.Printf("Do error: %s\n", err.Error())
 		return nil, err
 	}
-	defer resp.Body.Close()
+	//defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
