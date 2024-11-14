@@ -29,7 +29,8 @@ func NewClient() (client *Client) {
 	}
 }
 
-func (c *Client) RequestWithBody(context context.Context, url string, method string, body string) (result []byte, err error) {
+func (c *Client) RequestWithBody(url string, method string, body string) (result []byte, err error) {
+	context := context.Background()
 	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
@@ -44,7 +45,7 @@ func (c *Client) RequestWithBody(context context.Context, url string, method str
 		fmt.Printf("Do error: %s\n", err.Error())
 		return nil, err
 	}
-	//defer resp.Body.Close()
+	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -54,7 +55,8 @@ func (c *Client) RequestWithBody(context context.Context, url string, method str
 	fmt.Printf("Request response body: %s\n", string(respBody))
 	return respBody, err
 }
-func (c *Client) RequestWithAuth(context context.Context, url string, method string, body string, username string, password string) (result []byte, err error) {
+func (c *Client) RequestWithAuth(url string, method string, body string, username string, password string) (result []byte, err error) {
+	context := context.Background()
 	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
