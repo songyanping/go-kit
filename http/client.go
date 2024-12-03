@@ -16,9 +16,10 @@ type Client struct {
 
 func NewClient() (client *Client) {
 
-	timeout := 60 * time.Second
+	timeout := 30 * time.Second
 	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+		DisableKeepAlives: true, // 禁用连接复用
 	}
 	httpClient := http.Client{
 		Timeout:   timeout,
@@ -30,7 +31,8 @@ func NewClient() (client *Client) {
 }
 
 func (c *Client) RequestWithBody(url string, method string, body string) (result []byte, err error) {
-	context := context.Background()
+	context, cancel := context.WithTimeout(context.Background(), c.client.Timeout)
+	defer cancel()
 	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
@@ -56,7 +58,8 @@ func (c *Client) RequestWithBody(url string, method string, body string) (result
 	return respBody, err
 }
 func (c *Client) RequestWithAuth(url string, method string, body string, username string, password string) (result []byte, err error) {
-	context := context.Background()
+	context, cancel := context.WithTimeout(context.Background(), c.client.Timeout)
+	defer cancel()
 	fmt.Printf("Request parameters: url=%s,method=%s,body=%s\n", url, method, body)
 	req, err := http.NewRequestWithContext(context, method, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {

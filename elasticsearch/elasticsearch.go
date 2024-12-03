@@ -96,8 +96,6 @@ func (es *EsClient) Insert(ctx context.Context, index string, documentID string,
 		//log.Errorf("Error indexing document: %s", indexRes.Status())
 		log.Error(indexRes.String())
 		return errors.New("Error indexing document")
-	} else {
-		log.Println("Document indexed successfully!")
 	}
 	//log.Println(indexRes.String())
 	return nil
@@ -105,31 +103,36 @@ func (es *EsClient) Insert(ctx context.Context, index string, documentID string,
 
 func (es *EsClient) Update(ctx context.Context, index string, documentID string, body []byte) (err error) {
 	// 创建 Index 请求,通过http方式进行更新
-	//indexReq := esapi.UpdateRequest{
-	//	Index:      index,
-	//	DocumentID: documentID,
-	//	Body:       strings.NewReader(string(body)),
-	//	Refresh:    "true",
-	//}
-	// 发送 Index 请求
-	//indexRes, err := indexReq.Do(ctx, es.client)
-	//if err != nil {
-	//	log.Errorf("Error update document:%s", err.Error())
-	//	return err
-	//}
-
-	res, err := es.client.Update(index, documentID, strings.NewReader(string(body)), es.client.Update.WithContext(ctx))
+	indexReq := esapi.UpdateRequest{
+		Index:      index,
+		DocumentID: documentID,
+		Body:       strings.NewReader(string(body)),
+		Refresh:    "true",
+	}
+	indexRes, err := indexReq.Do(ctx, es.client)
 	if err != nil {
 		log.Errorf("Error update document:%s", err.Error())
+		return err
 	}
-	defer res.Body.Close()
-	if res.IsError() {
-		//log.Errorf("Error update document: %s", res.Status())
-		log.Error(res.String())
+	defer indexRes.Body.Close()
+	if indexRes.IsError() {
+		//log.Errorf("Error indexing document: %s", indexRes.Status())
+		log.Error(indexRes.String())
 		return errors.New("Error update document")
-	} else {
-		log.Println("Document update successfully!")
 	}
+
+	//res, err := es.client.Update(index, documentID, strings.NewReader(string(body)), es.client.Update.WithContext(ctx))
+	//if err != nil {
+	//	log.Errorf("Error update document:%s", err.Error())
+	//}
+	//defer res.Body.Close()
+	//if res.IsError() {
+	//	//log.Errorf("Error update document: %s", res.Status())
+	//	log.Error(res.String())
+	//	return errors.New("Error update document")
+	//} else {
+	//	log.Println("Document update successfully!")
+	//}
 	return nil
 }
 
